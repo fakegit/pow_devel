@@ -11,7 +11,7 @@
 # Date: July 2012
 # 
 
-global_conf = { 
+conf = { 
     "ENV"               :   "development",
     "DEFAULT_TEMPLATE"  :   "hero.tmpl",
     "DEFAULT_ENCODING"  :   "utf-8",

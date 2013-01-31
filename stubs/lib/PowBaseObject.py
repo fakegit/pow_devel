@@ -2,9 +2,8 @@ import sys, datetime, os, getopt, shutil
 import ConfigParser,string
 import re
 
-from sqlalchemy import MetaData
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import pymongo
+from bson import ObjectID
 
 sys.path.append(os.path.normpath("../config/"))
 import powlib
@@ -13,37 +12,23 @@ import pow
 
 
 class PowBaseObject(object):
-    """ pow base object class"""
-    #__engine__= create_engine(powlib.get_db_conn_str("../config/"))
-    __engine__= None
-    __metadata__ = MetaData(bind = __engine__)
-    __session__ = sessionmaker(bind = __engine__)
-    
+    """ pow base object class
+        Also handles the db connection"""
+
     def __init__(self):
         #env = pow.global_conf["ENV"]
-        logging = pow.logging["SQLALCHEMY_LOGGING"]
-        if logging == "True":
-            PowBaseObject.__engine__= create_engine(powlib.get_db_conn_str(), echo = True)
+        self.conn = pymongo.Connection()
+        if pow.conf["ENV"] == "development":
+            db = self.conn["%s"] % db.development["database"]
+        elif pow.conf["ENV"] == "test":
+            db = self.conn["%s"] % db.test["database"]
+        elif pow.conf["ENV"] == "production":
+            db = self.conn["%s"] % db.production["database"]
         else:
-            PowBaseObject.__engine__= create_engine(powlib.get_db_conn_str(), echo = False)
-        PowBaseObject.__metadata__.bind =  PowBaseObject.__engine__
-        PowBaseObject.__session__.configure( bind = PowBaseObject.__engine__ )
+            raise Exception("PowBaseObject.py: Unknown environment set in db.py")
         
-    def dispatch(self):
-        print "object:" + str(self) +  "dispatch() method invoked"
-        return
+    def get_connection(self):
+        return PowBaseObject.conn
     
-    def getMetaData(self):
-        return PowBaseObject.__metadata__
-    
-    def getEngine(self):
-        return PowBaseObject.__engine__
-    
-    def getSession(self):
-        return PowBaseObject.__session__()
-        
-    def getConnection(self):
-        return PowBaseObject.__engine__.connect()
-        
-    def repr(self):
-        return "Not implemented in class: PowBaseObject"
+    def get_databases(self):
+        return self.conn.database_names()

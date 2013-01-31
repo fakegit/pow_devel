@@ -10,8 +10,6 @@ from optparse import OptionParser
 import sqlite3
 import sys
 import datetime
-from sqlalchemy.orm import mapper
-from sqlalchemy import *
 import string
 
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./lib" )))
@@ -30,12 +28,24 @@ def main():
     """ Executes the render methods to generate a migration according to the given options """
     parser = OptionParser()
     mode= MODE_CREATE
-    parser.add_option("-m", "--model",  action="store", type="string", dest="model", help="defines the model for this migration.", default ="None")
-    parser.add_option("-c", "--comment",  action="store", type="string", dest="comment", help="defines a comment for this migration.", default ="No Comment")
-    parser.add_option("-j", "--job",  action="store", type="string", dest="job", help="creates migration job, e.g for backups, restores etc.",default="None")
+    parser.add_option("-m",
+                      "--model",  action="store",
+                      type="string", dest="model",
+                      help="defines the model for this migration.",
+                      default ="None")
+    parser.add_option("-c", "--comment",
+                      action="store", type="string",
+                      dest="comment",
+                      help="defines a comment for this migration.",
+                      default ="No Comment")
+    parser.add_option("-j", "--job",  action="store",
+                      type="string", dest="job",
+                      help="creates migration job, e.g for backups, restores etc.",
+                      default="None")
     parser.add_option("-d", "--column-definitions",  action="store", 
                         type="string", dest="col_defs", 
-                        help="column definitions.Form: d- 'NAME TYPE opt, NAME2 TYPE2 opt2' Name, type, options (all SQLAlchemy style).",
+                        help="""column definitions.Form: d- 'NAME TYPE opt,
+                        NAME2 TYPE2 opt2' Name, type, options (all SQLAlchemy style).""",
                         default="None")
     parser.add_option("-t", "--table",  action="store", 
                         type="string", dest="table", 
@@ -62,7 +72,8 @@ def main():
             
             if options.model.startswith("rel_") and ( options.model.count("_") == 2 ):
                 # if the name is of the form: rel_name1_name2 it is assumed that you want to
-                # generate a relation between name1 and name2. So the mig is especially customized for that.
+                # generate a relation between name1 and name2.
+                # So the mig is especially customized for that.
                 print "assuming you create a relation migration"
                 
                 render_relation_migration(options.model)
@@ -90,48 +101,19 @@ def main():
     print
     return
 
-def transform_col_defs( ostr, col_defs ):
-    """
-        Get the list of given column definitions of the form:
-        
-            NAME TYPE opt1 opt2 optn, NAME2 TYPE2 opt1 opt2 optn ....
-        And transform them to a valid SQLAlchemy Column definition for a migration.
-        Form:
-            Column('firstname', String(150), Options)
-        
-    """
-    
-    cols = ""
-    clist = str(col_defs).split(",")
-    print clist
-    counter = 0
-    for elem in clist:
-        counter += 1
-        elem = elem.strip()
-        elem = elem.split(" ")
-        if len(elem) == 2:
-            cols += "Column('%s', %s)" % (elem[0], elem[1]) 
-        elif len(elem) == 3:
-            cols += "Column('%s', %s, %s)" % (elem[0], elem[1], elem[2])
-        else:
-            print "Error. Wrong number of arguments. You must give name, type (and optionally column options)"
-        if counter < len(clist):
-            cols += "," + os.linesep + powlib.tab*3
-
-    ostr = ostr.replace("Column('example_column', String(50))", cols)
-    
-    return ostr
 
 
 def render_relation_migration(name, PARTS_DIR = powlib.PARTS_DIR, prefix_dir = "./"):
     """
-    renders a migration for a relational link between tables / models
+    renders a migration for a relational link between two collections
     Typical examples are A.has_many(B) and B.belongs_to(A)
     these are then added to the newly genrated migration file.
     
-    @params name    =>  name of the migration. Must be rel_modelA_modelB
-    @param PARTS_DIR:   A relative path to the stubs/partials dir from the executing script.
-    @param prefix_dir:  A prefix path to be added to migrations making prefix_dir/migrations the target dir
+    @param name:        name of the migration. Must be rel_modelA_modelB
+    @param PARTS_DIR:   A relative path to the stubs/partials dir from
+                        the executing script.
+    @param prefix_dir:  A prefix path to be added to migrations making
+                        prefix_dir/migrations the target dir
     """
     splittxt = string.split(name, "_")
     model1 = splittxt[1]
@@ -219,14 +201,21 @@ def update_app_and_version(maxversion, filename, version, comment=""):
     app_versions.update()
     return 
     
-def render_migration( modelname="NO_MODEL_GIVEN", comment="", col_defs = "", PARTS_DIR = powlib.PARTS_DIR, prefix_dir = "./"):
+def render_migration( modelname="NO_MODEL_GIVEN",
+                     comment="",
+                     col_defs = "",
+                     PARTS_DIR = powlib.PARTS_DIR,
+                     prefix_dir = "./"):
     """
     Renders a database migration file.
-    @param model:       Modelname for this migration (typically defining the model's base table)
+    @param model:       Modelname for this migration
+                        (typically defining the model's base table)
     @param comment:     a Comment for this migration
-    @param col_defs:    pre defined column definitions of the form NAME TYPE OPTIONS, NAME1 TYPE1 OPTIONS1, ...
+    @param col_defs:    pre defined column definitions of the form
+                        NAME TYPE OPTIONS, NAME1 TYPE1 OPTIONS1, ...
     @param PARTS_DIR:   A relative path to the stubs/partials dir from the executing script.
-    @param prefix_dir:  A prefix path to be added to migrations making prefix_dir/migrations the target dir
+    @param prefix_dir:  A prefix path to be added to migrations making
+                        prefix_dir/migrations the target dir
     """
     
     # add the auto generated (but can be safely edited) warning to the outputfile

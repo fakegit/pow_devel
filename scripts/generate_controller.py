@@ -6,12 +6,9 @@
 
 import os
 from optparse import OptionParser
-import sqlite3
 import sys
 import string
 import datetime
-from sqlalchemy.orm import mapper
-from sqlalchemy import *
 
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./lib" )))
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./models" )))

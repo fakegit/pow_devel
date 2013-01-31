@@ -3,12 +3,8 @@ import sys,os,datetime
 import string
 import types
 import urllib
-from sqlalchemy import orm
-import sqlalchemy.sql
+
 import logging
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy import Column, Integer, ForeignKey, DDL
-from sqlalchemy.schema import CreateTable
 
 # the libraries
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../../lib" )))
@@ -16,6 +12,7 @@ sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(_
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../" )))
 # the generators
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../../" )))
+
 import powlib
 from PowBaseObject import PowBaseObject
 import generate_model
@@ -23,55 +20,32 @@ import pdb
 
 class #BASECLASSNAME(object):
 
-    def __init__(self, parent):
+    def __init__(self):
         """ initialize this model """
-        #self.properties_list = #PROPERTIES_LIST
-        #self.parent = parent
-      
-        #self.__table__ = Table('posts', self.pbo.getMetaData(), autoload=True)
-        #self.generate_accessor_methods()
-        #self.t = self.parent.__table__
-        #self.setup_properties()
-        
-        #self.__mapper_args__ = {}
-        #self.__mapper__.add_properties({'posts': relationship(con.model.__mapper__)})
+        self.pbo = PowBaseObject()
+        self.conn = self.pbo.conn
+        self.collection = #COLLECTION
+        self.generate_accessor_methods()
+
     
     def find(self):
-        res = self.session.query(self.parent.__class__)
+        res = None
         return res
     
     def find_all(self):
-        res = self.session.query(self.parent.__class__)
+        res = Noen
         return res
     
     def find_by(self, *args, **kwargs):
-        print "args = ",args
-        #print "kwargs = ", kwargs
-        res = self.find()
-        res = res.filter(*args)
-        if kwargs.has_key("first"):
-            if kwargs["first"] == False:
-                return res
-        return res.first()
+        pass
+        
+        
     
     def setup_properties(self):
-        """ sets up the properties of this model.
-            mainly one way of relationships is handled this way.
-            see:  http://docs.sqlalchemy.org/en/rel_0_7/orm/mapper_config.html. 
-            search: Mapper.add_property() on the page """
-        #pdb.set_trace()
-        for elem in self.properties_list:
-            modelname = string.capitalize(powlib.singularize(elem))
-            rel_model = powlib.load_class(modelname, modelname)
-            #self.__mapper__.add_properties({ elem : relationship(rel_model.__mapper__) })
-            self.__mapper__.add_properties({ elem : relationship(rel_model) })
-            #setattr(self, elem, relationship(modelname))
+        pass
         
     def set_parent(self, object):
         self.parent = object
-        self.t = self.parent.__table__
-        self.properties_list = #PROPERTIES_LIST
-        self.setup_properties()
         return
     
     def get_columns(self):

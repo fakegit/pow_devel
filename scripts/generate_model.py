@@ -5,11 +5,16 @@
 #    see python generate_model.py --help
 
 from optparse import OptionParser
-import sqlite3, sys, os, datetime
+import pymongo,
+import sys
+import os
+import datetime
 import string
 
-sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./lib" )))
-sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./models/powmodels" )))
+sys.path.append( os.path.abspath(os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "./lib" )))
+sys.path.append( os.path.abspath(os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)), "./models/powmodels" )))
 import powlib
 
 
@@ -22,22 +27,46 @@ pow_newline = powlib.linesep
 pow_tab= powlib.tab
 
 def main():
-    """ Executes the render methods to generate a model, basemodel and basic tests according to the given options """
+    """ Executes the render methods to generate a model, #
+    basemodel and basic tests according to the given options """
     parser = OptionParser()
     mode= MODE_CREATE
-    parser.add_option("-n", "--name",  action="store", type="string", dest="name", help="creates model named model-name", default ="None")
-    parser.add_option("-a", "--attributes",  action="store", type="string", dest="actions", help="defines the attributes included in the model.", default ="None")
-    parser.add_option("-f", "--force",  action="store_true",  dest="force", help="forces overrides of existing files",default="False")
-    parser.add_option("-c", "--comment",  action="store", type="string", dest="comment", help="defines a comment for this model.", default ="No Comment")
-    parser.add_option("-p", "--path",  action="store", type="string", dest="path", help="sets the model output psth.", default ="./")
-    #parser.add_option("-n", "--no-migration",  action="store_true",  dest="nomig", help="supress creation of the related migration for this model",default="False")    
-    
-    
+    parser.add_option("-n",
+                      "--name",
+                      action="store",
+                      type="string",
+                      dest="name",
+                      help="creates model named model-name",
+                      default ="None")
+    parser.add_option("-a",
+                      "--attributes",
+                      action="store", type="string",
+                      dest="actions",
+                      help="defines the attributes included in the model.",
+                      default ="None")
+    parser.add_option("-f", "--force",
+                      action="store_true",
+                      dest="force",
+                      help="forces overrides of existing files",
+                      default="False")
+    parser.add_option("-c", "--comment",
+                      action="store", type="string",
+                      dest="comment",
+                      help="defines a comment for this model.",
+                      default ="No Comment")
+    parser.add_option("-p", "--path",
+                      action="store", type="string",
+                      dest="path",
+                      help="sets the model output psth.",
+                      default ="./")
+
     (options, args) = parser.parse_args()
     #print options
     if options.name == "None":
        if len(args) > 0:
-           # if no option flag (like -n) is given, it is assumed that the first argument is the model name. (representing -n arg1)
+           # if no option flag (like -n) is given,
+           # it is assumed that the first argument is the model name.
+           # (representing -n arg1)
            options.name = args[0]
        else:
            parser.error("You must at least specify an appname by giving -n <name>.")
@@ -133,7 +162,8 @@ def render_model(modelname = "NO_MODELNAME_GIVEN",
     return 
 
 def reset_model(modelname):
-    """ overwrites the generated Model, BaseModel and Test with empty / newly generated versions."""
+    """ overwrites the generated Model, BaseModel and Test
+    with empty / newly generated versions."""
     return render_model(modelname, True, "", properties=None, nomig=True)
     
 def render_test_stub (modelname, classname, prefix_path = "", PARTS_DIR = powlib.PARTS_DIR ):

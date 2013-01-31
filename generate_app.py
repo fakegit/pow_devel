@@ -64,9 +64,10 @@ def render_db_config( appname, appbase ):
     infile = open("./stubs/config/db.py")
     instr = infile.read()
     infile.close()
-    instr = instr.replace("please_rename_the_development_db", appname + "_devel")
-    instr = instr.replace("please_rename_the_test_db", appname + "_test")
-    instr = instr.replace("please_rename_the_production_db", appname + "_prod")
+    DB_PATH = os.path.abspath(os.path.join(appbase + "db" ))
+    instr = instr.replace("please_rename_the_development_db", DB_PATH + appname + "_devel")
+    instr = instr.replace("please_rename_the_test_db", DB_PATH + appname + "_test")
+    instr = instr.replace("please_rename_the_production_db", DB_PATH + appname + "_prod")
     ofile = open( os.path.normpath(appbase + "/config/db.py"), "w" )
     ofile.write(instr)
     ofile.close()
@@ -158,6 +159,7 @@ def gen_app(appname, appdir, force=False):
     powlib.check_copy_file("pow_router.wsgi", appbase)
     powlib.check_copy_file("scripts/pow_console.py", appbase)
     powlib.check_copy_file("scripts/runtests.py", appbase)
+    powlib.check_copy_file("scripts/init_pow.py", appbase)
         
     powlib.replace_string_in_file(
         os.path.join(appbase + "/" + "simple_server.py"),
@@ -174,10 +176,10 @@ def gen_app(appname, appdir, force=False):
     #
     # copy the initial db's
     #
-    appdb = "stubs/db/app_db_including_app_versions_small.db"
-    powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_prod.db") )
-    powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_test.db") )
-    powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_devel.db") )
+    #appdb = "stubs/db/app_db_including_app_versions_small.db"
+    #powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_prod.db") )
+    #powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_test.db") )
+    #powlib.check_copy_file(appdb, os.path.normpath(appbase + "/db/" + appname + "_devel.db") )
     #powlib.check_copy_file("stubs/db/empty_app.db", os.path.normpath(appbase + "/db/app.db") )
     
     #
