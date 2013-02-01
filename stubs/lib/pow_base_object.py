@@ -3,7 +3,7 @@ import ConfigParser,string
 import re
 
 import pymongo
-from bson import ObjectID
+from bson import ObjectId
 
 sys.path.append(os.path.normpath("../config/"))
 import powlib
@@ -19,16 +19,20 @@ class PowBaseObject(object):
         #env = pow.global_conf["ENV"]
         self.conn = pymongo.Connection()
         if pow.conf["ENV"] == "development":
-            db = self.conn["%s"] % db.development["database"]
+            currdb = db.development["database"]
+            self.db = self.conn[currdb] 
         elif pow.conf["ENV"] == "test":
-            db = self.conn["%s"] % db.test["database"]
+            self.db = self.conn["%s"] % db.test["database"]
         elif pow.conf["ENV"] == "production":
-            db = self.conn["%s"] % db.production["database"]
+            self.db = self.conn["%s"] % db.production["database"]
         else:
             raise Exception("PowBaseObject.py: Unknown environment set in db.py")
         
     def get_connection(self):
         return PowBaseObject.conn
     
+    def get_db(self):
+        return self.db
+
     def get_databases(self):
         return self.conn.database_names()

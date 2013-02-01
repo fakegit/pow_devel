@@ -19,9 +19,7 @@ sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(_
 
 import powlib
 import pow_web_lib
-import PowObject
-from BaseController import BaseController
-import sqlalchemy.types
+from base_controller import BaseController
 # import the related model
 import #MODELNAME
 import logging
@@ -31,7 +29,6 @@ class #CONTROLLERNAMEController(BaseController):
         """ Iitialize this controller """
         self.modelname = "#MODELNAME"
         BaseController.__init__(self)
-        self.login_required = []
         # put the actions you implemented but do not want to be callable via
         # web request into the locked_actions dictionary. 
         # Format: { "actionname" : "redirect_to" } 
@@ -44,10 +41,10 @@ class #CONTROLLERNAMEController(BaseController):
         res = self.model.find_all()
         return self.render(model=self.model, powdict=powdict, list=res)
     
-    def show( self,powdict ):
+    def show( self, powdict ):
         """ Standard PoW action to show detailed 
         info for the related model record with id=id"""
-        res = self.model.find_by("id == %s" %(powdict["REQ_PARAMETERS"]["id"]))
+        res = self.model.find_by( { "_id" : powdict["REQ_PARAMETERS"]["id"] })
         return self.render(model=res, powdict=powdict)
         
     def new( self, powdict ):
@@ -55,22 +52,12 @@ class #CONTROLLERNAMEController(BaseController):
         self.model.__init__()
         dict = powdict["REQ_PARAMETERS"]
         for key in dict:
-            curr_type = self.model.get_column_type(key)
-            if curr_type == type(sqlalchemy.types.BLOB()) or curr_type == type(sqlalchemy.types.BINARY()):
-                ofiledir  = os.path.normpath("./public/img/")
-                print "key: ", key
-                if pow_web_lib.get_form_binary_data( key, dict, ofiledir):
-                    # if form contains file data AND file could be written, update model
-                    self.model.set(key, dict[key].filename )   
-                else:
-                    # dont update model
-                    print " ##### ________>>>>>>>   BINARY DATA but couldnt update model"
-            else:
-                self.model.set(key, dict[key])
+            # only for test
+            print key    
         
         self.model.create()
-        powdict["FLASHTEXT"] ="Yep, record successfully created."
-        powdict["FLASHTYPE"] ="success"
+        #powdict["FLASHTEXT"] ="Yep, record successfully created."
+        #powdict["FLASHTYPE"] ="success"
         spectmpl = string.capitalize(self.model.get_name()) + "_message.tmpl"
         return self.render(special_tmpl=spectmpl , model=self.model, powdict=powdict)
     
@@ -81,29 +68,19 @@ class #CONTROLLERNAMEController(BaseController):
     
     def edit( self, powdict ):
         """ Standard PoW action to. renders the edit record view #CONTROLLERNAME_edit.tmpl"""
-        res = self.model.find_by("id == %s" %(powdict["REQ_PARAMETERS"]["id"]))
+        res = self.model.find_by( { "_id" :  powdict["REQ_PARAMETERS"]["id"] })
         return self.render(model=res, powdict=powdict)
     
     def update( self, powdict ):
         """ Standard PoW action. updates the record.  """
         self.model.__init__()
         #print powdict["REQ_PARAMETERS"]
-        self.model = self.model.find_by("id == %s" %(powdict["REQ_PARAMETERS"]["id"]))
+        self.model = self.model.find_by( { "_id" : powdict["REQ_PARAMETERS"]["id"] })  
         #print self.model
         dict = powdict["REQ_PARAMETERS"]
         for key in dict:
-            curr_type = self.model.get_column_type(key)
-            if curr_type == type(sqlalchemy.types.BLOB()) or curr_type == type(sqlalchemy.types.BINARY()):
-                ofiledir  = os.path.normpath("./public/img/")
-                print "key: ", key
-                if pow_web_lib.get_form_binary_data( key, dict, ofiledir):
-                    # if form contains file data AND file could be written, update model
-                    self.model.set(key, dict[key].filename )   
-                else:
-                    # dont update model
-                    print " ##### -_______>>>>>>>   BINARY DATA but couldnt update model"
-            else:
-                self.model.set(key, dict[key])
+            # only for test
+            print key
         self.model.update()
         powdict["FLASHTEXT"] ="Yep, record successfully updated."
         powdict["FLASHTYPE"] ="success"
@@ -115,7 +92,7 @@ class #CONTROLLERNAMEController(BaseController):
     def delete( self, powdict ):
         """ Standard PoW action to delete the record with id=id"""
         self.model.__init__()
-        res = self.model.find_by("id == %s" %(powdict["REQ_PARAMETERS"]["id"]))
+        res = self.model.find_by( { "_id"  : powdict["REQ_PARAMETERS"]["id"] })
         res.delete()
         powdict["FLASHTEXT"] ="Yep, record successfully deleted."
         powdict["FLASHTYPE"] ="success"
