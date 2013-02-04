@@ -39,6 +39,7 @@ class BaseModel(object):
         return
     
     def save(self):
+        print self.__dict__
         self.collection.save(self.__dict__)
 
     def set(self, name, value):

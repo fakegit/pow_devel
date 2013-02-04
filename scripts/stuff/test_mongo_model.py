@@ -11,3 +11,4 @@ p = Post.init("posts")
 print dir(p)
 p.title = "test"
 print p.title
+p.save()

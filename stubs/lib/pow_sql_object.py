@@ -27,9 +27,6 @@ class PowObject(object):
         PowObject.__session__= sessionmaker()
         PowObject.__session__.configure(bind=PowObject.__engine__)
         
-    def dispatch(self):
-        print "object:" + str(self) +  "dispatch() method invoked"
-        return
         
     def getMetaData(self):
         return PowObject.__metadata__

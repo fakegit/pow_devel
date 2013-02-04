@@ -1,9 +1,5 @@
-import sys, datetime, os, getopt, shutil
-import ConfigParser,string
-import re
-
+import sys, datetime, os, string
 import pymongo
-from bson import ObjectId
 
 sys.path.append(os.path.normpath("../config/"))
 import powlib

@@ -14,11 +14,11 @@ from sqlalchemy import event, DDL
 import sys
 import os
 
-sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../models" )))
-sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../lib" )))
+sys.path.append( os.path.abspath(os.path.join( __file__, "../models" )))
+sys.path.append( os.path.abspath(os.path.join( __file__, "../lib" )))
 
 import powlib
-from PowTable import PowTable
+from pow_sql_table import PowTable
 from BaseMigration import BaseMigration
 
 class Migration(BaseMigration):

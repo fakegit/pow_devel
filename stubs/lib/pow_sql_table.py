@@ -7,9 +7,8 @@ from sqlalchemy import Text, Sequence, Integer
 import datetime
 import string
 
-sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "../lib" )))
+sys.path.append( os.path.abspath(os.path.join__file__, "../lib" )))
 import powlib
-from PowObject import PowObject
 
 class PowTable(sqlalchemy.Table):
     
