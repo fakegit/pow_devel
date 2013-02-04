@@ -6,7 +6,7 @@
 # 16/08/2012    initially created
 #
 development = {
-    "dialect"   :   "sqlite",
+    "dialect"   :   "#DBTYPE",
     "driver"    :   "",
     "database"  :   "please_rename_the_development_db",
     "host"      :   "localhost",
@@ -18,7 +18,7 @@ development = {
 }
 
 test = {
-    "dialect"   :   "sqlite",
+    "dialect"   :   "#DBTYPE",
     "driver"    :   "",
     "database"  :   "please_rename_the_test_db",
     "host"      :   "localhost",
@@ -30,7 +30,7 @@ test = {
 }
 
 production = {
-    "dialect"   :   "sqlite",
+    "dialect"   :   "#DBTYPE",
     "driver"    :   "",
     "database"  :   "please_rename_the_production_db",
     "host"      :   "localhost",

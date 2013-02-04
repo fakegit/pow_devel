@@ -42,6 +42,11 @@ def main():
                       dest="force",
                       help="forces overrides of existing app",
                       default="False")
+    parser.add_option("-sql", "--sqlalchemy",
+                      action="store_true",
+                      dest="sql",
+                      help="create an sqlalchemy ORM based app",
+                      default="False")
 
     (options, args) = parser.parse_args()
     #print options, args
@@ -62,7 +67,7 @@ def main():
     end = None
     start = datetime.datetime.now()
 
-    gen_app(appname, appdir, force)
+    gen_app(appname, appdir, force, options.sql)
 
     end = datetime.datetime.now()
     duration = None
@@ -70,22 +75,28 @@ def main():
     print " -- generated_app in(" + str(duration) + ")"
 
 
-def render_db_config(appname, appbase):
+def render_db_config(appname, appbase, sql_db=false):
     """ Creates the db.cfg file for this application
         and puts it in appname/config/db.cfg"""
 
     infile = open("./stubs/config/db.py")
     instr = infile.read()
     infile.close()
-    instr = instr.replace("please_rename_the_development_db", appname + "_devel")  # lint:ok
+    instr = instr.replace("please_rename_the_development_db", appname + "_devel")  #lint:ok
     instr = instr.replace("please_rename_the_test_db", appname + "_test")
     instr = instr.replace("please_rename_the_production_db", appname + "_prod")
+
+    if sql_db:
+        instr = instr.replace("#DBTYPE", "sqlite")
+    else:
+        instr = instr.replace("#DBTYPE", "mongodb")
+
     ofile = open(os.path.normpath(appbase + "/config/db.py"), "w")
     ofile.write(instr)
     ofile.close()
 
 
-def gen_app(appname, appdir, force=False):
+def gen_app(appname, appdir, force=False, sql=False):
     """ Generates the complete App Filesystem Structure for Non-GAE Apps.
         Filesystem action like file and dir creation, copy fiels etc.
         NO DB action in this function """
@@ -196,28 +207,36 @@ def gen_app(appname, appdir, force=False):
     #
     # copy the initial db's
     #
-    appdb = "stubs/db/app_db_including_app_versions_small.db"
-    app_db_path = appbase + "/db/" + appname
-    powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_prod.db"))
-    powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_test.db"))
-    powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_devel.db"))
-    #powlib.check_copy_file("stubs/db/empty_app.db", os.path.normpath(appbase + "/db/app.db") )  # lint:ok
+    if sql:
+        appdb = "stubs/db/app_db_including_app_versions_small.db"
+        app_db_path = appbase + "/db/" + appname
+        powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_prod.db"))
+        powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_test.db"))
+        powlib.check_copy_file(appdb, os.path.normpath(app_db_path + "_devel.db"))
+        #powlib.check_copy_file("stubs/db/empty_app.db", os.path.normpath(appbase + "/db/app.db") )  # lint:ok
 
     #
     # initiate the db.cfg file
     #
     render_db_config(appname, appbase)
 
-    generate_model.render_model(
-        "App",
-        False,
-        "System class containing the App Base Informations",
-        appname)
-    generate_model.render_model(
-        "Version",
-        False,
-        "System class containing the Versions",
-        appname)
+    if sql:
+        #initiate SQLAlchemy / relational based DB environment
+        generate_model.render_model(
+            "App",
+            False,
+            "System class containing the App Base Informations",
+            appname)
+        generate_model.render_model(
+            "Version",
+            False,
+            "System class containing the Versions",
+            appname)
+    else:
+        #initial mongoDB config and environment
+        infile = os.path.abspath("./stubs/partials/init_pow_mongodb.py")
+        powlib.replace_string_in_file( infile, "#APPNAME", appname):
+        
     return
 
 
