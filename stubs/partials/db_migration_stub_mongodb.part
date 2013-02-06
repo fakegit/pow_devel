@@ -15,8 +15,8 @@ sys.path.append( os.path.abspath(os.path.join( __file__, "../models" )))
 sys.path.append( os.path.abspath(os.path.join( __file__, "../lib" )))
 
 import powlib
-from pow_mongodb_table import PowTable
-from pow_mongodb_table import PowColumn as Column
+from pow_mongodb import PowTable
+from pow_mongodb import PowColumn as Column
 from base_migration_mongodb import BaseMigration
 
 class Migration(BaseMigration):
@@ -26,15 +26,16 @@ class Migration(BaseMigration):
     def up(self):
         """ up method will be executed when running do_migrate -d up"""
           
-        self.table = PowTable(self.table_name, 
-            # here is where you define your table (Format see example below)
-            # the columns below are just examples.
-            # Remember that PoW automatically adds an id and a timestamp column (ID,TIMESTAMP)
-            Column('example_column', "String(50)")
-            Column('example_column', "Text")
-            
-            #Column('user_id', Integer, ForeignKey('users.id'))
+        self.table = PowTable( tablename,
+            {   
+                "title"     :   "",
+                "body"      :   "",
+                "tags"      :   [],
+                "words"     :   0
+
+            }
         )
+
         self.create_table()
 
 

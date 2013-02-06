@@ -9,6 +9,8 @@ import pymongo
 sys.path.append( os.path.abspath(os.path.join(__file__, "../lib" )))
 sys.path.append( os.path.abspath(os.path.join(__file__,"../config/")))
 import powlib
+import pow
+import db
 
 class PowColumn(object):
     """
@@ -47,11 +49,23 @@ class PowBaseObject(object):
         self.conn = pymongo.Connection()
         if pow.conf["ENV"] == "development":
             currdb = db.development["database"]
-            self.db = self.conn[currdb] 
+            if currdb in self.conn.database_names():
+                self.db = self.conn[currdb] 
+            else:
+                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
+                raise Exception(msg) 
         elif pow.conf["ENV"] == "test":
-            self.db = self.conn["%s"] % db.test["database"]
+            if currdb in self.conn.database_names():
+                self.db = self.conn["%s"] % db.test["database"]
+            else:
+                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
+                raise Exception(msg)
         elif pow.conf["ENV"] == "production":
-            self.db = self.conn["%s"] % db.production["database"]
+            if currdb in self.conn.database_names():  
+                self.db = self.conn["%s"] % db.production["database"]
+            else:
+                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
+                raise Exception(msg)
         else:
             raise Exception("PowBaseObject.py: Unknown environment set in db.py")
         
@@ -70,10 +84,11 @@ class PowTable(pymongo.collection.Collection):
             pymongo.collection.Collection(database, name[, create=False[, **kwargs]]])
             See: http://api.mongodb.org/python/current/api/pymongo/collection.html
     """
-    def __init__(self, name, create=False, **kwargs):
+    def __init__(self, name, schema, create=False, **kwargs):
         """initializes the collection with the according db and connection"""
         pbo = PowBaseObject()
         super(PowTable, self).__init__(pbo.get_db(), name, create, **kwargs)
+        self.schema = schema
 
     def create_collection(self):
         """ creates a collection in mongoDB 
