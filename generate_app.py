@@ -141,9 +141,9 @@ def gen_app(appname, appdir, force=False, sql=False):
                 powlib.check_create_dir(os.path.join(subdir, str(subs)))
 
     #
-    # copy the files in subdirs. Form ( from, to )
+    # copy the files in subdirs. Form ( from, to: appdir + x)
     #
-    deep_copy_list = [("stubs/config", "config"),
+    deep_copy_list = [ ("stubs/config", "config"),
                        ("stubs/lib", "lib"),
                        ("stubs", "stubs"),
                        ("stubs/migrations", "migrations"),
@@ -182,15 +182,22 @@ def gen_app(appname, appdir, force=False, sql=False):
     #
     # copy the generator files
     #
-    powlib.check_copy_file("scripts/generate_model.py", appbase)
-    powlib.check_copy_file("scripts/do_migrate.py", appbase)
-    powlib.check_copy_file("scripts/generate_controller.py", appbase)
-    powlib.check_copy_file("scripts/generate_migration.py", appbase)
-    powlib.check_copy_file("scripts/generate_scaffold.py", appbase)
-    powlib.check_copy_file("scripts/simple_server.py", appbase)
+    if sql:
+      SCRIPTDIR = "scripts/sql/"
+    else:
+      SCRIPTDIR = "scripts/mongodb/"
+
+    powlib.check_copy_file("SCRIPTDIR" + "generate_model.py", appbase)
+    powlib.check_copy_file("SCRIPTDIR" + "do_migrate.py", appbase)
+    powlib.check_copy_file("SCRIPTDIR" + "generate_controller.py", appbase)
+    powlib.check_copy_file("SCRIPTDIR" + "generate_migration.py", appbase)
+    powlib.check_copy_file("SCRIPTDIR" + "generate_scaffold.py", appbase)
+    powlib.check_copy_file("SCRIPTDIR" + "generate_mvc.py", appbase)
+
+    powlib.check_copy_file("scripts/pow_console.py", appbase)
+    powlib.check_copy_file("scripts/runtests.py", appbase)
     powlib.check_copy_file("scripts/pow_router.wsgi", appbase)
-    powlib.check_copy_file("pow_console.py", appbase)
-    powlib.check_copy_file("runtests.py", appbase)
+    powlib.check_copy_file("scripts/simple_server.py", appbase)
 
     powlib.replace_string_in_file(
         os.path.join(appbase + "/" + "simple_server.py"),
@@ -205,7 +212,7 @@ def gen_app(appname, appdir, force=False, sql=False):
     )
 
     #
-    # copy the initial db's
+    # copy the initial db's. Only for SQL-DBs
     #
     if sql:
         appdb = "stubs/db/app_db_including_app_versions_small.db"
@@ -220,6 +227,7 @@ def gen_app(appname, appdir, force=False, sql=False):
     #
     render_db_config(appname, appbase)
 
+    # initialize the base PoW DB management environment.
     if sql:
         #initiate SQLAlchemy / relational based DB environment
         generate_model.render_model(
