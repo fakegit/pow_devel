@@ -4,7 +4,7 @@ import time,datetime
 
 sys.path.append( os.path.abspath(os.path.join__file__, "../lib" )))
 import powlib
-from pow_mongodb_object import PowObject
+from pow_mongodb import PowObject
 
 class BaseMigration(PowObject):
     

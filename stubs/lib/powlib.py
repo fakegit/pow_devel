@@ -330,7 +330,7 @@ def get_app_db_conn_str():
 
 def get_db_conn_str():
     #env = readconfig("pow.cfg","global","ENV")
-    env = pow.global_conf["ENV"]
+    env = pow.conf["ENV"]
     #appdir = readconfig( "pow.cfg","global","APP_DIR")
     appdir = get_app_dir()
     #print "APP_DIR: " + appdir

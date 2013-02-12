@@ -22,6 +22,7 @@ class PowObject(object):
         print sql.compile(dialect=engine.dialect)
     
     def __init__(self):
+        dbinf = getattr(db, pow.conf["ENV"])
         PowObject.__engine__= create_engine(powlib.get_db_conn_str())
         PowObject.__metadata__ = MetaData()
         PowObject.__metadata__.bind =  PowObject.__engine__

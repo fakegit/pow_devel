@@ -8,9 +8,9 @@
 development = {
     "dialect"   :   "#DBTYPE",
     "driver"    :   "",
-    "database"  :   "please_rename_the_development_db",
+    "database"  :   "#DEVEL_DB",
     "host"      :   "localhost",
-    "port"      :   "0",
+    "port"      :   "#PORT",
     "parameters":   "",
     "username"  :   "",
     "password"  :   ""
@@ -20,9 +20,9 @@ development = {
 test = {
     "dialect"   :   "#DBTYPE",
     "driver"    :   "",
-    "database"  :   "please_rename_the_test_db",
+    "database"  :   "#TEST_DB",
     "host"      :   "localhost",
-    "port"      :   "0",
+    "port"      :   "#PORT",
     "parameters":   "",
     "username"  :   "",
     "password"  :   ""
@@ -32,9 +32,9 @@ test = {
 production = {
     "dialect"   :   "#DBTYPE",
     "driver"    :   "",
-    "database"  :   "please_rename_the_production_db",
+    "database"  :   "#PROD_DB",
     "host"      :   "localhost",
-    "port"      :   "0",
+    "port"      :   "#PORT",
     "parameters":   "",
     "username"  :   "",
     "password"  :   ""

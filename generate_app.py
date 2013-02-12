@@ -82,14 +82,16 @@ def render_db_config(appname, appbase, sql_db=false):
     infile = open("./stubs/config/db.py")
     instr = infile.read()
     infile.close()
-    instr = instr.replace("please_rename_the_development_db", appname + "_devel")  #lint:ok
-    instr = instr.replace("please_rename_the_test_db", appname + "_test")
-    instr = instr.replace("please_rename_the_production_db", appname + "_prod")
+    instr = instr.replace("#DEVEL_DB", appname + "_devel") 
+    instr = instr.replace("#TEST_DB", appname + "_test")
+    instr = instr.replace("#PROD_DB", appname + "_prod")
 
     if sql_db:
         instr = instr.replace("#DBTYPE", "sqlite")
+        instr = instr.replace("#PORT", "")
     else:
         instr = instr.replace("#DBTYPE", "mongodb")
+        instr = instr.replace("#PORT", "27017")
 
     ofile = open(os.path.normpath(appbase + "/config/db.py"), "w")
     ofile.write(instr)

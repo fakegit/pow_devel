@@ -40,34 +40,22 @@ class PowColumn(object):
         return json.dumps(self.__dict__)
 
 
-class PowBaseObject(object):
+class PowObject(object):
     """ pow base object class
         Also handles the db connection"""
 
     def __init__(self):
         #env = pow.global_conf["ENV"]
-        self.conn = pymongo.Connection()
-        if pow.conf["ENV"] == "development":
-            currdb = db.development["database"]
-            if currdb in self.conn.database_names():
-                self.db = self.conn[currdb] 
-            else:
-                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
-                raise Exception(msg) 
-        elif pow.conf["ENV"] == "test":
-            if currdb in self.conn.database_names():
-                self.db = self.conn["%s"] % db.test["database"]
-            else:
-                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
-                raise Exception(msg)
-        elif pow.conf["ENV"] == "production":
-            if currdb in self.conn.database_names():  
-                self.db = self.conn["%s"] % db.production["database"]
-            else:
-                msg = "PowBaseObject.py: Database: %s does not exist. " % (currdb)
-                raise Exception(msg)
-        else:
-            raise Exception("PowBaseObject.py: Unknown environment set in db.py")
+        #self.conn = pymongo.Connection()
+        try:
+            dbinf = getattr(db, pow.conf["ENV"])
+            self.client = pymongo.MongoClient( 
+                dbinf.get("host"),
+                dbinf.get("port"),
+                )
+            self.db = self.client[dbinfo.get("database")]
+        except:
+            raise Exception("PowObject.py: Unknown environment set in db.py")
         
     def get_connection(self):
         return PowBaseObject.conn
