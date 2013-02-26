@@ -9,7 +9,8 @@ sys.path.append("../models/")
 import Post
 
 if __name__=="__main__":
-    f = open("../public/doc/dracula.txt","r")
+    #f = open("../public/doc/dracula.txt","r")
+    f = open("./dracula.txt","r")
     counter = 0
     found = False
     postlist = []

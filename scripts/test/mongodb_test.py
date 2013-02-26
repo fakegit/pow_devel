@@ -6,7 +6,7 @@
 #
 
 
-from pow_mongodb_column import PowColumn as Column
+from pow_mongodb import PowColumn as Column
 c = Column('example_column', "String(50)", primary_key=True)
 print c.to_json()
 print dir(c)
