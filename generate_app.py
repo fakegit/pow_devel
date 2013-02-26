@@ -12,12 +12,10 @@ import shutil
 
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./stubs/lib" )))  # lint:ok
 sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./stubs/models/powmodels" )))  # lint:ok
-#for p in sys.path:
-#    print p
 
 
 import powlib
-import generate_model
+#import generate_model
 
 
 def main():
@@ -42,11 +40,11 @@ def main():
                       dest="force",
                       help="forces overrides of existing app",
                       default="False")
-    parser.add_option("-sql", "--sqlalchemy",
+    parser.add_option("-s", "--sql",
                       action="store_true",
                       dest="sql",
-                      help="create an sqlalchemy ORM based app",
-                      default="False")
+                      help="create an sql/sqlalchemy ORM based app. Default is to use MongoDB",
+                      default=False)
 
     (options, args) = parser.parse_args()
     #print options, args
@@ -66,7 +64,7 @@ def main():
     start = None
     end = None
     start = datetime.datetime.now()
-
+    print options.sql
     gen_app(appname, appdir, force, options.sql)
 
     end = datetime.datetime.now()
@@ -75,7 +73,7 @@ def main():
     print " -- generated_app in(" + str(duration) + ")"
 
 
-def render_db_config(appname, appbase, sql_db=false):
+def render_db_config(appname, appbase, sql=False):
     """ Creates the db.cfg file for this application
         and puts it in appname/config/db.cfg"""
 
@@ -86,7 +84,7 @@ def render_db_config(appname, appbase, sql_db=false):
     instr = instr.replace("#TEST_DB", appname + "_test")
     instr = instr.replace("#PROD_DB", appname + "_prod")
 
-    if sql_db:
+    if sql:
         instr = instr.replace("#DBTYPE", "sqlite")
         instr = instr.replace("#PORT", "")
     else:
@@ -102,7 +100,16 @@ def gen_app(appname, appdir, force=False, sql=False):
     """ Generates the complete App Filesystem Structure for Non-GAE Apps.
         Filesystem action like file and dir creation, copy fiels etc.
         NO DB action in this function """
-
+    print "sqlmode: %s" %(sql)
+    if sql:
+        print "appending sql path"
+        sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./scripts/sql" )))  # lint:ok
+    else:
+        print "appending mongoDB path"
+        sys.path.append( os.path.abspath(os.path.join( os.path.dirname(os.path.abspath(__file__)), "./scripts/mongodb" )))  # lint:ok
+    print sys.path
+    import generate_model  
+    
     appname = str(appname)
     appname = str.strip(appname)
     appname = str.lower(appname)
@@ -244,8 +251,8 @@ def gen_app(appname, appdir, force=False, sql=False):
             appname)
     else:
         #initial mongoDB config and environment
-        infile = os.path.abspath("./stubs/partials/init_pow_mongodb.py")
-        powlib.replace_string_in_file( infile, "#APPNAME", appname):
+        infile = os.path.abspath("./scripts/mongodb/init_pow_mongodb.py")
+        powlib.replace_string_in_file( infile, "#APPNAME", appname)
         
     return
 

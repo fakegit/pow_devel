@@ -20,7 +20,7 @@ if __name__ == "__main__":
     if var == "q" or var =="Q":
         sys.exit(0)
     
-    appname = string.lower("#APPNAME")
+    appname = string.lower("test")
 
     print "initializing the Pow base collections...."
 

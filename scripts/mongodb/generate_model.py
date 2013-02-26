@@ -5,6 +5,7 @@
 #    see python generate_model.py --help
 
 from optparse import OptionParser
+import pymongo
 import sys
 import os
 import datetime
